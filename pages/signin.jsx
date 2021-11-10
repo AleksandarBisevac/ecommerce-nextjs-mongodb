@@ -39,7 +39,7 @@ function SignIn() {
           </button>
 
           <p className='text-center my-4'>
-            {"You don't have an account? Register "}
+            {"You don't have an account? Register now "}
             <Link href='/register'>
               <a>{'here.'}</a>
             </Link>
