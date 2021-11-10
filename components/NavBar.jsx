@@ -38,7 +38,7 @@ function NavBar() {
           className='collapse navbar-collapse justify-content-end'
           id='navbarNavDropdown'
         >
-          <ul className='navbar-nav'>
+          <ul className='navbar-nav d-flex justify-content-end align-items-end'>
             <li className='nav-item'>
               <Link href='/cart'>
                 <a className={'nav-link' + ' ' + isActive('/cart')}>
@@ -57,7 +57,7 @@ function NavBar() {
 
             <li className='nav-item dropdown'>
               <a
-                className='nav-link dropdown-toggle'
+                className='nav-link dropdown-toggle text-end'
                 href='#'
                 id='navbarDropdownMenuLink'
                 role='button'
