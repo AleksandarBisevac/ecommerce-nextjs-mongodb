@@ -8,10 +8,11 @@ const connectDB = () => {
   mongoose.connect(
     process.env.MONGODB_URL,
     {
-      useCreateIndex: true,
-      useFindAndModify: false,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      //iz nekog razloga buffer-uje prilikom ubacivanja u MDB bazu ako postoje ovi parametri
+      // useCreateIndex: true,
+      // useFindAndModify: false,
+      // useNewUrlParser: true,
+      // useUnifiedTopology: true,
     },
     (err) => {
       if (err) throw err;
