@@ -1,15 +1,65 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { DataContext } from '../store/GlobalState';
+import Cookie from 'js-cookie';
 
 function NavBar() {
   const router = useRouter();
+  const { state, dispatch } = useContext(DataContext);
+  const { auth } = state;
+
   const isActive = (routeRef) => {
     if (routeRef === router.pathname) {
       return 'active';
     }
     return '';
   };
+
+  const handleLogut = () => {
+    Cookie.remove('refreshtoken', { path: 'api/auth/accessToken' });
+    localStorage.removeItem('firstLogin');
+    dispatch({ type: 'AUTH', payload: {} });
+    dispatch({ type: 'NOTIFY', payload: { success: 'Logged out' } });
+  };
+
+  const loggedRouter = () => {
+    return (
+      <li className='nav-item dropdown'>
+        <a
+          className='nav-link dropdown-toggle text-end'
+          href='#'
+          id='navbarDropdownMenuLink'
+          role='button'
+          data-bs-toggle='dropdown'
+          aria-expanded='false'
+        >
+          <img
+            src={auth.user.avatar}
+            alt={auth.user.avatar}
+            style={{
+              borderRadius: '50%',
+              width: '30px',
+              height: '30px',
+              transform: 'translateY(-3px)',
+              marginRight: '3px',
+            }}
+          />
+          User Name
+        </a>
+        <div className='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
+          <a className='dropdown-item' href='#'>
+            Profile
+          </a>
+
+          <button className='dropdown-item' onClick={handleLogut}>
+            Logout
+          </button>
+        </div>
+      </li>
+    );
+  };
+
   return (
     <nav className='navbar navbar-expand-lg navbar-light bg-light'>
       <div className='container-fluid'>
@@ -47,38 +97,17 @@ function NavBar() {
                 </a>
               </Link>
             </li>
-            <li className='nav-item'>
-              <Link href='/signin'>
-                <a className={'nav-link' + ' ' + isActive('/signin')}>
-                  <i className='fa fa-user' aria-hidden='true'></i> Sign In
-                </a>
-              </Link>
-            </li>
-
-            <li className='nav-item dropdown'>
-              <a
-                className='nav-link dropdown-toggle text-end'
-                href='#'
-                id='navbarDropdownMenuLink'
-                role='button'
-                data-bs-toggle='dropdown'
-                aria-expanded='false'
-              >
-                User Name
-              </a>
-              <div
-                className='dropdown-menu'
-                aria-labelledby='navbarDropdownMenuLink'
-              >
-                <a className='dropdown-item' href='#'>
-                  Profile
-                </a>
-
-                <a className='dropdown-item' href='#'>
-                  Logout
-                </a>
-              </div>
-            </li>
+            {Object.keys(auth).length === 0 ? (
+              <li className='nav-item'>
+                <Link href='/login'>
+                  <a className={'nav-link' + ' ' + isActive('/login')}>
+                    <i className='fa fa-user' aria-hidden='true'></i> Sign In
+                  </a>
+                </Link>
+              </li>
+            ) : (
+              loggedRouter()
+            )}
           </ul>
         </div>
       </div>

@@ -16,3 +16,10 @@ a {
 * {
   box-sizing: border-box;
 }
+
+img {
+  object-fit: cover;
+}
+
+/*---------- LOADING ----------*/
+@import './components/loading.scss';
