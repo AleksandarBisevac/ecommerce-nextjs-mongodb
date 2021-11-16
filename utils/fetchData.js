@@ -1,7 +1,7 @@
 const baseUrl = process.env.BASE_URL;
 
 export const getData = async (url, token) => {
-  const res = await fetch(`${baseUrl}/api/${url}`, {
+  const res = await fetch(`/api/${url}`, {
     method: 'GET',
     headers: {
       Authorization: token,
@@ -27,7 +27,7 @@ export const postData = async (url, post, token) => {
 };
 
 export const putData = async (url, put, token) => {
-  const res = await fetch(`${baseUrl}/api/${url}`, {
+  const res = await fetch(`/api/${url}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ export const putData = async (url, put, token) => {
 };
 
 export const patchData = async (url, patch, token) => {
-  const res = await fetch(`${baseUrl}/api/${url}`, {
+  const res = await fetch(`/api/${url}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',

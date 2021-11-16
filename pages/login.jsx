@@ -2,14 +2,14 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useContext, useEffect } from 'react';
-import valid from '.././utils/valid';
 import { DataContext } from '../store/GlobalState';
 import { postData } from '../utils/fetchData';
-
-function Register() {
-  const initialState = { name: '', email: '', password: '', cf_password: '' };
+import Cookie from 'js-cookie';
+//alek..r1234
+function SignIn() {
+  const initialState = { email: '', password: '' };
   const [userData, setUserData] = useState(initialState);
-  const { name, email, password, cf_password } = userData;
+  const { email, password } = userData;
 
   const { state, dispatch } = useContext(DataContext);
   const { auth } = state;
@@ -19,24 +19,30 @@ function Register() {
   const onChangeInputHandler = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
-    dispatch({ type: 'NOTIFY', payload: {} });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const errMsg = valid(name, email, password, cf_password);
-    if (errMsg) {
-      return dispatch({ type: 'NOTIFY', payload: { error: errMsg } });
-    }
     dispatch({ type: 'NOTIFY', payload: { loading: true } });
 
-    const res = await postData('auth/register', userData);
+    const res = await postData('auth/login', userData);
     if (res.err) {
       return dispatch({ type: 'NOTIFY', payload: { error: res.err } });
     }
-    return dispatch({ type: 'NOTIFY', payload: { success: res.msg } });
+    dispatch({ type: 'NOTIFY', payload: { success: res.msg } });
+    dispatch({
+      type: 'AUTH',
+      payload: { token: res.access_token, user: res.user },
+    });
+
+    Cookie.set('refreshtoken', res.refresh_token, {
+      path: 'api/auth/accessToken',
+      expires: 7,
+    });
+
+    localStorage.setItem('firstLogin', true);
   };
+
   useEffect(() => {
     if (Object.keys(auth).length !== 0) {
       router.push('/');
@@ -46,7 +52,7 @@ function Register() {
   return (
     <>
       <Head>
-        <title>Register Page</title>
+        <title>Sign in Page</title>
       </Head>
       <div>
         <form
@@ -54,20 +60,7 @@ function Register() {
           style={{ maxWidth: '500px' }}
           onSubmit={handleSubmit}
         >
-          <div className='form-group mb-3'>
-            <label htmlFor='name' className='form-label'>
-              Name
-            </label>
-            <input
-              type='text'
-              className='form-control'
-              id='name'
-              name='name'
-              value={name}
-              onChange={onChangeInputHandler}
-            />
-          </div>
-          <div className='form-group mb-3'>
+          <div className='mb-3'>
             <label htmlFor='exampleInputEmail1' className='form-label'>
               Email address
             </label>
@@ -84,41 +77,28 @@ function Register() {
               We'll never share your email with anyone else.
             </div>
           </div>
-          <div className='form-group mb-3'>
-            <label htmlFor='inputPassword1' className='form-label'>
+          <div className='mb-3'>
+            <label htmlFor='exampleInputPassword1' className='form-label'>
               Password
             </label>
             <input
               type='password'
               className='form-control'
-              id='inputPassword1'
+              id='exampleInputPassword1'
               name='password'
               value={password}
               onChange={onChangeInputHandler}
             />
           </div>
-          <div className='form-group mb-3'>
-            <label htmlFor='inputPassword2' className='form-label'>
-              Confirm password
-            </label>
-            <input
-              type='password'
-              className='form-control'
-              id='inputPassword2'
-              name='cf_password'
-              value={cf_password}
-              onChange={onChangeInputHandler}
-            />
-          </div>
 
           <button type='submit' className='btn btn-dark w-100'>
-            Register
+            Login
           </button>
 
           <p className='text-center my-4'>
-            {'Already have an account? Sign in '}
-            <Link href='/signin'>
-              <a style={{ color: 'crimson' }}>{'here.'}</a>
+            {"You don't have an account? Register now "}
+            <Link href='/register'>
+              <a>{'here.'}</a>
             </Link>
           </p>
         </form>
@@ -127,4 +107,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default SignIn;
